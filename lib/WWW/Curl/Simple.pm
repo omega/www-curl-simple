@@ -9,6 +9,7 @@ use Carp qw/croak/;
 use WWW::Curl::Simple::Request;
 use WWW::Curl::Multi;
 use WWW::Curl::Easy;
+use Sub::Alias;
 
 use namespace::clean -except => 'meta';
 
@@ -94,12 +95,15 @@ sub add_request {
     $self->_add_request(WWW::Curl::Simple::Request->new(request => $req));
 }
 
+alias register => 'add_request';
+
 =head3 perform
 
 Does all the requests added with add_request, and returns a 
 list of HTTP::Response-objects
 
 =cut
+alias wait => 'perform';
 
 sub perform {
     my ($self) = @_;

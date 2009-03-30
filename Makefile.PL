@@ -10,6 +10,7 @@ build_requires 'Test::More';
 requires 'WWW::Curl' => '4.0';
 requires 'Moose' => '0.50';
 requires 'MooseX::AttributeHelpers';
+requires 'Sub::Alias';
 
 
 auto_install;
