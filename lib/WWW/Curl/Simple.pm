@@ -1,6 +1,15 @@
 package WWW::Curl::Simple;
 
 use Moose;
+use MooseX::AttributeHelpers;
+
+use HTTP::Request;
+use HTTP::Response;
+use Carp qw/croak/;
+use WWW::Curl::Easy;
+use WWW::Curl::Multi;
+
+use namespace::clean -except => 'meta';
 
 =head1 NAME
 
@@ -10,11 +19,6 @@ WWW::Curl::Simple - A simpler interface to WWW::Curl
 
 Version 0.01
 
-=cut
-
-our $VERSION = '0.01';
-
-
 =head1 SYNOPSIS
 
 Quick summary of what the module does.
@@ -23,8 +27,128 @@ Perhaps a little code snippet.
 
     use WWW::Curl::Simple;
 
-    my $foo = WWW::Curl::Simple->new();
-    ...
+    my $curl = WWW::Curl::Simple->new();
+    
+    my $res = $curl->get('http://www.google.com/');
+
+
+=cut
+
+our $VERSION = '0.01';
+
+has '_multi' => (is => 'ro', isa => 'WWW::Curl::Multi', lazy_build => 1);
+sub _build__multi {
+    my ($self) = @_;
+    
+    return WWW::Curl::Multi->new;
+}
+
+sub _get_easy {
+    my ($self, $req) = @_;
+    
+    my $curl = new WWW::Curl::Easy;
+    
+    $curl->setopt(CURLOPT_HEADER,1);
+    $curl->setopt(CURLOPT_NOPROGRESS,1);
+    
+    $curl->setopt(CURLOPT_URL, $req->uri);
+    if ($req->method eq 'POST') {
+        $curl->setopt(CURLOPT_POST, 1);
+        $curl->setopt(CURLOPT_POSTFIELDS, $req->content);
+    }
+    
+    my @headers;
+    foreach my $h (+$req->headers->header_field_names) {
+        warn "h: $h";
+        push(@headers, "$h: " . $req->header($h));
+    }
+    if (scalar(@headers)) {
+        $curl->setopt(CURLOPT_HTTPHEADER, \@headers);
+    }
+    
+    return $curl;
+}
+
+=head3 request($req)
+
+$req should be a  HTTP::Request object.
+
+If you have a URI-string or object, look at the get-method instead
+
+=cut
+
+sub request {
+    my ($self, $req) = @_;
+    
+    my $curl = $self->_get_easy($req);
+    
+    my ($body, $head);
+    # NOTE - do not use a typeglob here. A reference to a typeglob is okay though.
+    open (my $fileb, ">", \$body);
+    open (my $fileh, ">", \$head);
+    $curl->setopt(CURLOPT_WRITEDATA, $fileb);
+    $curl->setopt(CURLOPT_WRITEHEADER, $fileh);
+    
+    # Starts the actual request
+    my $retcode = $curl->perform;
+
+    # Looking at the results...
+    if ($retcode == 0) {
+            return HTTP::Response->parse($head . $body);
+    } else {
+            croak("An error happened: ".$curl->strerror($retcode)." ($retcode)\n");
+    }
+}
+
+
+=head3 get($uri || URI)
+
+Accepts one parameter, which should be a reference to a URI object or a
+string representing a uri.
+
+=cut
+
+sub get {
+    my ($self, $uri) = @_;
+    return $self->request(HTTP::Request->new(GET => $uri));
+}
+
+=head2 MULTI requests usage
+
+=head3 add_request($req)
+
+Adds $req (HTTP::Request) to the list of URL's to fetch
+
+=cut
+
+has _requests => (
+    metaclass => 'Collection::Array', 
+    is => 'ro', 
+    isa => 'ArrayRef[WWW::Curl::Easy]', 
+    provides => {
+        push => '_add_request',
+        elements => 'requests'
+    },
+);
+
+sub add_request {
+    my ($self, $req) = @_;
+    
+    #convert $req into WWW::Curl::Easy;
+    
+}
+=head3 perform
+
+Does all the requests added with add_request, and returns a 
+list of HTTP::Response-objects
+
+=cut
+
+sub perform {
+    my ($self) = @_;
+    
+    
+}
 
 =head1 AUTHOR
 
