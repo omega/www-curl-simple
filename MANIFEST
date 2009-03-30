@@ -1,0 +1,8 @@
+Changes
+MANIFEST
+Makefile.PL
+README
+lib/WWW/Curl/Simple.pm
+t/00-load.t
+xt/pod-coverage.t
+xt/pod.t
