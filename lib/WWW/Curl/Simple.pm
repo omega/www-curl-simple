@@ -8,6 +8,7 @@ use HTTP::Response;
 use Carp qw/croak/;
 use WWW::Curl::Simple::Request;
 use WWW::Curl::Multi;
+use WWW::Curl::Easy;
 
 use namespace::clean -except => 'meta';
 
@@ -36,12 +37,6 @@ Perhaps a little code snippet.
 
 our $VERSION = '0.01';
 
-has '_multi' => (is => 'ro', isa => 'WWW::Curl::Multi', lazy_build => 1);
-sub _build__multi {
-    my ($self) = @_;
-    
-    return WWW::Curl::Multi->new;
-}
 
 =head3 request($req)
 
@@ -85,18 +80,18 @@ Adds $req (HTTP::Request) to the list of URL's to fetch
 has _requests => (
     metaclass => 'Collection::Array', 
     is => 'ro', 
-    isa => 'ArrayRef[WWW::Curl::Easy]', 
+    isa => 'ArrayRef[WWW::Curl::Simple::Request]', 
     provides => {
         push => '_add_request',
         elements => 'requests'
     },
+    default => sub { [] },
 );
 
 sub add_request {
     my ($self, $req) = @_;
     
-    #convert $req into WWW::Curl::Easy;
-    
+    $self->_add_request(WWW::Curl::Simple::Request->new(request => $req));
 }
 
 =head3 perform
@@ -109,7 +104,38 @@ list of HTTP::Response-objects
 sub perform {
     my ($self) = @_;
     
+    my $curlm = WWW::Curl::Multi->new;
     
+    my %reqs;
+    my $i = 0;
+    foreach my $req ($self->requests) {
+        $i++;
+        my $curl = $req->easy;
+        # we set this so we have the ref later on
+        $curl->setopt(CURLOPT_PRIVATE, $i);
+        $curlm->add_handle($curl);
+        
+        $reqs{$i} = $req;
+    }
+    my @res;
+    while ($i) {
+        my $active_transfers = $curlm->perform;
+        if ($active_transfers != $i) {
+            while (my ($id,$retcode) = $curlm->info_read) {
+                if ($id) {
+                    $i--;
+                    my $req = $reqs{$id};
+                    
+                    unless ($retcode == 0) {
+                        croak("Error during handeling of request: " . $req);
+                    }
+                    push(@res, $req->response);
+                    delete($reqs{$id});
+                }
+            }
+        }
+    }
+    return @res;
 }
 
 =head1 AUTHOR

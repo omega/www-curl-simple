@@ -65,10 +65,15 @@ sub perform {
     my $retcode = $self->easy->perform;
     # Looking at the results...
     if ($retcode == 0) {
-            return HTTP::Response->parse($self->head . $self->body);
+            return $self->response;
     } else {
             croak("An error happened: ".$self->easy->strerror($retcode)." ($retcode)\n");
     }
     
+}
+
+sub response {
+    my ($self) = @_;
+    return HTTP::Response->parse($self->head . $self->body);
 }
 1;
