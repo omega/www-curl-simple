@@ -6,7 +6,7 @@ use MooseX::AttributeHelpers;
 use HTTP::Request;
 use HTTP::Response;
 use Carp qw/croak/;
-use WWW::Curl::Easy;
+use WWW::Curl::Simple::Request;
 use WWW::Curl::Multi;
 
 use namespace::clean -except => 'meta';
@@ -43,32 +43,6 @@ sub _build__multi {
     return WWW::Curl::Multi->new;
 }
 
-sub _get_easy {
-    my ($self, $req) = @_;
-    
-    my $curl = new WWW::Curl::Easy;
-    
-    $curl->setopt(CURLOPT_HEADER,1);
-    $curl->setopt(CURLOPT_NOPROGRESS,1);
-    
-    $curl->setopt(CURLOPT_URL, $req->uri);
-    if ($req->method eq 'POST') {
-        $curl->setopt(CURLOPT_POST, 1);
-        $curl->setopt(CURLOPT_POSTFIELDS, $req->content);
-    }
-    
-    my @headers;
-    foreach my $h (+$req->headers->header_field_names) {
-        warn "h: $h";
-        push(@headers, "$h: " . $req->header($h));
-    }
-    if (scalar(@headers)) {
-        $curl->setopt(CURLOPT_HTTPHEADER, \@headers);
-    }
-    
-    return $curl;
-}
-
 =head3 request($req)
 
 $req should be a  HTTP::Request object.
@@ -80,24 +54,11 @@ If you have a URI-string or object, look at the get-method instead
 sub request {
     my ($self, $req) = @_;
     
-    my $curl = $self->_get_easy($req);
-    
-    my ($body, $head);
-    # NOTE - do not use a typeglob here. A reference to a typeglob is okay though.
-    open (my $fileb, ">", \$body);
-    open (my $fileh, ">", \$head);
-    $curl->setopt(CURLOPT_WRITEDATA, $fileb);
-    $curl->setopt(CURLOPT_WRITEHEADER, $fileh);
+    my $curl = WWW::Curl::Simple::Request->new(request => $req);
     
     # Starts the actual request
-    my $retcode = $curl->perform;
+    return $curl->perform;
 
-    # Looking at the results...
-    if ($retcode == 0) {
-            return HTTP::Response->parse($head . $body);
-    } else {
-            croak("An error happened: ".$curl->strerror($retcode)." ($retcode)\n");
-    }
 }
 
 
@@ -137,6 +98,7 @@ sub add_request {
     #convert $req into WWW::Curl::Easy;
     
 }
+
 =head3 perform
 
 Does all the requests added with add_request, and returns a 
