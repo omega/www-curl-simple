@@ -28,7 +28,8 @@ sub _build_easy {
     $curl->setopt(CURLOPT_HEADER,1);
     $curl->setopt(CURLOPT_NOPROGRESS,1);
     
-    $curl->setopt(CURLOPT_URL, $req->uri);
+    my $url = $req->uri->as_string;
+    $curl->setopt(CURLOPT_URL, $url);
     if ($req->method eq 'POST') {
         $curl->setopt(CURLOPT_POST, 1);
         $curl->setopt(CURLOPT_POSTFIELDS, $req->content);

@@ -137,7 +137,7 @@ sub perform {
                     my $req = $reqs{$id};
                     
                     unless ($retcode == 0) {
-                        croak("Error during handeling of request: " . $req);
+                        croak("Error during handeling of request: " .$req->easy->strerror($retcode)." ". $req->request->uri);
                     }
                     push(@res, $req->response);
                     delete($reqs{$id});
