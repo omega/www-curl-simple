@@ -1,8 +1,23 @@
 Changes
-MANIFEST
-Makefile.PL
-README
+inc/Module/AutoInstall.pm
+inc/Module/Install.pm
+inc/Module/Install/AutoInstall.pm
+inc/Module/Install/Base.pm
+inc/Module/Install/Can.pm
+inc/Module/Install/Fetch.pm
+inc/Module/Install/Include.pm
+inc/Module/Install/Makefile.pm
+inc/Module/Install/Metadata.pm
+inc/Module/Install/Win32.pm
+inc/Module/Install/WriteAll.pm
 lib/WWW/Curl/Simple.pm
-t/00-load.t
+lib/WWW/Curl/Simple/Request.pm
+Makefile.PL
+MANIFEST			This list of files
+META.yml
+README
+t/00.load.t
+t/10.usage.multi.t
+t/10.usage.single.t
 xt/pod-coverage.t
 xt/pod.t
