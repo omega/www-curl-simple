@@ -70,6 +70,12 @@ sub get {
     return $self->request(HTTP::Request->new(GET => $uri));
 }
 
+sub post {
+    my ($self, $uri, $form) = @_;
+    
+    return $self->request(HTTP::Request->new(POST => $uri, undef, $form));
+}
+
 =head2 MULTI requests usage
 
 =head3 add_request($req)
