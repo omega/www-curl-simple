@@ -9,7 +9,6 @@ use Carp qw/croak/;
 use WWW::Curl::Simple::Request;
 use WWW::Curl::Multi;
 use WWW::Curl::Easy;
-use Sub::Alias;
 
 use namespace::clean -except => 'meta';
 
@@ -36,7 +35,7 @@ Perhaps a little code snippet.
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head3 request($req)
@@ -101,7 +100,9 @@ sub add_request {
     $self->_add_request(WWW::Curl::Simple::Request->new(request => $req));
 }
 
-alias register => 'add_request';
+__PACKAGE__->meta->add_package_symbol('&register',
+    __PACKAGE__->meta->get_package_symbol('&add_request')
+);
 
 =head3 perform
 
@@ -109,7 +110,10 @@ Does all the requests added with add_request, and returns a
 list of HTTP::Response-objects
 
 =cut
-alias wait => 'perform';
+
+__PACKAGE__->meta->add_package_symbol('&wait',
+    __PACKAGE__->meta->get_package_symbol('&perform')
+);
 
 sub perform {
     my ($self) = @_;

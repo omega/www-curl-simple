@@ -25,7 +25,6 @@ sub _build_easy {
 
     my $curl = new WWW::Curl::Easy;
     
-    $curl->setopt(CURLOPT_HEADER,1);
     $curl->setopt(CURLOPT_NOPROGRESS,1);
     
     my $url = $req->uri->as_string;
@@ -74,6 +73,9 @@ sub perform {
 
 sub response {
     my ($self) = @_;
-    return HTTP::Response->parse($self->head . $self->body);
+    my $res = HTTP::Response->parse($self->head . "\r" . $self->body);
+    $res->request($self->request);
+    $res->content($self->body);
+    return $res;
 }
 1;

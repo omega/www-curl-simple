@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
-use Test::More tests => 5;
+use Test::More tests => 10;
 use WWW::Curl::Simple;
 
 
@@ -12,10 +12,17 @@ my $curl = WWW::Curl::Simple->new();
     isa_ok($res, "HTTP::Response");
     ok($res->is_success, "request suceeded");
     like($res->content, qr/Wikipedia/);
+    isa_ok($res->request, "HTTP::Request");
+    
 }
 {
     my $res = $curl->get('http://www.google.com/');
     isa_ok($res, "HTTP::Response");
+    unlike($res->content, qr|^HTTP/1|);
+    isa_ok($res->request, "HTTP::Request");
+    #like($res->content, qr|^<HTML>|);
+    is($res->content_type, "text/html");
+    
 }
 
 
@@ -26,4 +33,6 @@ my $curl = WWW::Curl::Simple->new();
     unless(ok($res->is_success, "request succeeded")) {
         diag($res->code . " " . $res->status_line);
     }
+    isa_ok($res->request, "HTTP::Request");
+    
 }

@@ -16,7 +16,7 @@ my @urls = (
 'http://www.perl.com',
 );
 
-plan tests => scalar(@urls) * 2;
+plan tests => scalar(@urls) * 3;
 
 my $curl = WWW::Curl::Simple->new();
 
@@ -28,6 +28,8 @@ my $curl = WWW::Curl::Simple->new();
     foreach my $res (@res) {
         isa_ok($res, "HTTP::Response");
         ok($res->is_success, "we have success!  " . $res->code);
+        
+        isa_ok($res->request, "HTTP::Request");
     }
     
 }
