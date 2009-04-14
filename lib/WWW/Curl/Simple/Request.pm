@@ -37,13 +37,12 @@ sub _build_easy {
     
     my @headers;
     foreach my $h (+$req->headers->header_field_names) {
-        warn "h: $h";
+        #warn "h: $h";
         push(@headers, "$h: " . $req->header($h));
     }
     if (scalar(@headers)) {
         $curl->setopt(CURLOPT_HTTPHEADER, \@headers);
     }
-    
     
     $curl->setopt(CURLOPT_HEADERFUNCTION, sub {
         my $chunk = shift;
