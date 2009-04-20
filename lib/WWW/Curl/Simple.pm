@@ -10,6 +10,8 @@ use WWW::Curl::Simple::Request;
 use WWW::Curl::Multi;
 use WWW::Curl::Easy;
 
+#use base 'LWP::Parallel::UserAgent';
+
 use namespace::clean -except => 'meta';
 
 =head1 NAME
@@ -18,7 +20,7 @@ WWW::Curl::Simple - A simpler interface to WWW::Curl
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 SYNOPSIS
 
@@ -53,7 +55,6 @@ sub request {
     
     # Starts the actual request
     return $curl->perform;
-
 }
 
 
@@ -68,6 +69,14 @@ sub get {
     my ($self, $uri) = @_;
     return $self->request(HTTP::Request->new(GET => $uri));
 }
+
+=head3 post($uri || URI, $form)
+
+Created a HTTP::Request of type POST to $uri, which can be a string
+or a URI object, and sets the form of the request to $form. See
+L<HTTP::Request> for more information on the format of $form
+
+=cut
 
 sub post {
     my ($self, $uri, $form) = @_;
@@ -111,10 +120,6 @@ list of HTTP::Response-objects
 
 =cut
 
-__PACKAGE__->meta->add_package_symbol('&wait',
-    __PACKAGE__->meta->get_package_symbol('&perform')
-);
-
 sub perform {
     my ($self) = @_;
     
@@ -139,17 +144,46 @@ sub perform {
                 if ($id) {
                     $i--;
                     my $req = $reqs{$id};
-                    
                     unless ($retcode == 0) {
                         croak("Error during handeling of request: " .$req->easy->strerror($retcode)." ". $req->request->uri);
                     }
-                    push(@res, $req->response);
+                    push(@res, $req);
                     delete($reqs{$id});
                 }
             }
         }
     }
     return @res;
+}
+
+=head3 LWP::Parallel::UserAgent compliant methods
+
+=over
+
+=item wait
+
+These methods are here to provide an easier transition from
+L<LWP::Parallel::UserAgent>. It is by no means a drop in replacement,
+but using C<wait> instead of C<perform> makes the return-value perform
+more alike
+
+=back
+=cut
+
+sub wait {
+    my $self = shift;
+    
+    my @res = $self->perform(@_);
+    
+    # convert to a hash
+    my %res;
+    
+    while (my $r = pop @res) {
+        #warn "adding $r at " . scalar(@res);
+        $res{scalar(@res)} = $r;
+    }
+    
+    return \%res;
 }
 
 =head1 AUTHOR

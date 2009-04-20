@@ -1,5 +1,17 @@
 package WWW::Curl::Simple::Request;
 
+=head1 NAME
+
+WWW::Curl::Simple::Request - A small class representing request/response
+
+=head1 DESCRIPTION
+
+Just a way to collect things used by both single and multi, and some
+WWW::Curl setup. You shouldn't need to use this class anywhere, although
+C<$curl->perform> returns objects of this class
+
+=cut
+
 
 use Moose;
 use WWW::Curl::Easy;
@@ -8,11 +20,39 @@ use Scalar::Util qw/weaken/;
 
 use namespace::clean -except => 'meta';
 
+=head1 INTERFACE
+
+=head2 METHODS
+
+=head3 body
+
+The body of the response
+
+=cut
 
 has 'body' => (is => 'rw', isa => 'Str', required => 0, default => '');
+
+=head3 head
+
+The head of the response
+
+=cut
+
 has 'head' => (is => 'rw', isa => 'Str', required => 0, default => '');
 
+=head3 request
+
+The HTTP::Request-object that we where created with. 
+
+=cut
+
 has 'request' => (is => 'ro', isa => 'HTTP::Request');
+
+=head3 easy
+
+our WWW::Curl::Easy-object
+
+=cut
 
 has 'easy' => (is => 'rw', isa => 'WWW::Curl::Easy', required => 0, lazy_build => 1);
 
@@ -58,6 +98,13 @@ sub _build_easy {
     
 }
 
+=head3 perform
+
+Performs the actuall request trough WWW::Curl::Easy. Used mostly in
+single request land. Will croak on errors.
+
+=cut
+
 sub perform {
     my ($self) = @_;
     
@@ -71,6 +118,14 @@ sub perform {
     
 }
 
+=head3 response
+
+Returns a HTTP::Response that represents the response of this object.
+
+Also sets request on the response object to the original request object.
+
+=cut
+
 sub response {
     my ($self) = @_;
     my $res = HTTP::Response->parse($self->head . "\r" . $self->body);
@@ -78,4 +133,15 @@ sub response {
     $res->content($self->body);
     return $res;
 }
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2009 Andreas Marienborg, all rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+
+=cut
+
 1;

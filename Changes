@@ -1,5 +1,14 @@
 Revision history for WWW-Curl-Simple
-
+0.02    2009-04-20 09:11:00+0200
+        INCOMPAT: Fix some compat issues with LWP::Parallel::UserAgent.
+                  We now return an hash like they do, with objects that have the
+                  same methods
+        INCOMPAT: $curl->perform on a multi-request now returns objects that have
+                  ->request and ->response methods, instead of the ->response
+                  directly.
+        
+        Fix really bad response-fuckup.
+        
 0.01    2009-04-14 09:37:00+0200
         First version, very basic interface. Does not support everything yet
 
