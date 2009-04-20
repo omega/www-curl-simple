@@ -37,7 +37,7 @@ Perhaps a little code snippet.
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 
 =head3 request($req)
