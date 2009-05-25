@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
-use Test::More tests => 10;
+use Test::More tests => 14;
 use WWW::Curl::Simple;
 
 
@@ -33,6 +33,15 @@ my $curl = WWW::Curl::Simple->new();
     unless(ok($res->is_success, "request succeeded")) {
         diag($res->code . " " . $res->status_line);
     }
+    isa_ok($res->request, "HTTP::Request");
+    
+}
+
+{
+    my $res = $curl->request(HTTP::Request->new(GET => 'http://bilder.abcsok.no/search/rss?rows=1&q=jens'));
+    isa_ok($res, "HTTP::Response");
+    ok($res->is_success, "request suceeded");
+    like($res->content, qr/bilder/);
     isa_ok($res->request, "HTTP::Request");
     
 }

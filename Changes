@@ -1,4 +1,8 @@
 Revision history for WWW-Curl-Simple
+0.04    2009-05-25 13:06:00+0200
+        Set a default UserAgent header, since some services seem to require a
+        UserAgent header.
+        
 0.03    2009-04-20 09:32:00+0200
         Bump version.
         

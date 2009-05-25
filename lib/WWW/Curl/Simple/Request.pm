@@ -22,6 +22,20 @@ use namespace::clean -except => 'meta';
 
 =head1 INTERFACE
 
+=head2 ATTRIBUTES
+
+=head3 agent
+
+A String that will be sent as the user-agent string. Defaults to
+
+=cut
+
+has 'agent' => (is => 'rw', isa => 'Str', required => 0, lazy_build => 1);
+
+sub _build_agent {
+    return "WWW::Curl::Simple/" . $WWW::Curl::Simple::VERSION;
+}
+
 =head2 METHODS
 
 =head3 body
@@ -66,6 +80,7 @@ sub _build_easy {
     my $curl = new WWW::Curl::Easy;
     
     $curl->setopt(CURLOPT_NOPROGRESS,1);
+    $curl->setopt(CURLOPT_USERAGENT, $self->agent);
     
     my $url = $req->uri->as_string;
     $curl->setopt(CURLOPT_URL, $url);

@@ -20,7 +20,7 @@ WWW::Curl::Simple - A simpler interface to WWW::Curl
 
 =head1 VERSION
 
-Version 0.02
+Version 0.04
 
 =head1 SYNOPSIS
 
@@ -37,7 +37,7 @@ Perhaps a little code snippet.
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 
 =head3 request($req)
