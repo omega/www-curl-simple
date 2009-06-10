@@ -5,7 +5,7 @@ use MooseX::AttributeHelpers;
 
 use HTTP::Request;
 use HTTP::Response;
-use Carp qw/croak/;
+use Carp qw/croak carp/;
 use WWW::Curl::Simple::Request;
 use WWW::Curl::Multi;
 use WWW::Curl::Easy;
@@ -37,7 +37,7 @@ Perhaps a little code snippet.
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 
 =head3 request($req)
@@ -132,6 +132,15 @@ sub perform {
         my $curl = $req->easy;
         # we set this so we have the ref later on
         $curl->setopt(CURLOPT_PRIVATE, $i);
+        
+        # here we also mangle all requests based on options
+        # XXX: Should re-factor this to be a metaclass/trait on the attributes,
+        # and a general method that takes all those and applies the propper setopt
+        # calls
+        
+        $curl->setopt(CURLOPT_TIMEOUT, $self->timeout) if $self->timeout;
+        $curl->setopt(CURLOPT_CONNECTTIMEOUT, $self->connection_timeout) if $self->connection_timeout;
+        
         $curlm->add_handle($curl);
         
         $reqs{$i} = $req;
@@ -145,7 +154,11 @@ sub perform {
                     $i--;
                     my $req = $reqs{$id};
                     unless ($retcode == 0) {
-                        croak("Error during handeling of request: " .$req->easy->strerror($retcode)." ". $req->request->uri);
+                        my $err = "Error during handeling of request: " 
+                            .$req->easy->strerror($retcode)." ". $req->request->uri;
+                        
+                        croak($err) if $self->fatal;
+                        carp($err) unless $self->fatal;
                     }
                     push(@res, $req);
                     delete($reqs{$id});
@@ -155,6 +168,7 @@ sub perform {
     }
     return @res;
 }
+
 
 =head3 LWP::Parallel::UserAgent compliant methods
 
@@ -185,6 +199,35 @@ sub wait {
     
     return \%res;
 }
+
+
+=head2 ATTRIBUTES
+
+=head3 timeout
+
+Sets the timeout of individual requests, in seconds
+
+=cut
+
+has 'timeout' => (is => 'ro', isa => 'Int');
+
+=head3 connection_timeout
+
+Sets the timeout of the connect phase of requests, in seconds
+
+=cut
+
+has 'connection_timeout' => (is => 'ro', isa => 'Int');
+
+
+=head3 fatal
+
+Defaults to true, but if set to false, it will make failure in multi-requests
+warn instead of die.
+
+=cut
+
+has 'fatal' => (is => 'ro', isa => 'Bool', default => 1);
 
 =head1 AUTHOR
 

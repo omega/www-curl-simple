@@ -1,4 +1,10 @@
 Revision history for WWW-Curl-Simple
+0.05    2009-06-10 07:44:00+0200
+        New options:
+          - timeout: Set timeout for content in seconds
+          - connection_timeout: Set timeout for connection in seconds
+          - fatal: (defaults to true), if false, will carp, not croak, on errors.
+        
 0.04    2009-05-25 13:06:00+0200
         Set a default UserAgent header, since some services seem to require a
         UserAgent header.
