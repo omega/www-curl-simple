@@ -1,7 +1,6 @@
 package WWW::Curl::Simple;
 
-use Moose;
-use MooseX::AttributeHelpers;
+use Mouse;
 
 use HTTP::Request;
 use HTTP::Response;
@@ -92,26 +91,27 @@ Adds $req (HTTP::Request) to the list of URL's to fetch
 
 =cut
 
-has _requests => (
-    metaclass => 'Collection::Array', 
+has requests => (
     is => 'ro', 
-    isa => 'ArrayRef[WWW::Curl::Simple::Request]', 
-    provides => {
-        push => '_add_request',
-        elements => 'requests'
-    },
+    isa => 'ArrayRef', 
+    auto_deref => 1,
     default => sub { [] },
 );
 
+sub _add_request {
+    my ($self, $req) = @_;
+    
+    push(@{ $self->requests }, $req);
+}
 sub add_request {
     my ($self, $req) = @_;
     
     $self->_add_request(WWW::Curl::Simple::Request->new(request => $req));
 }
 
-__PACKAGE__->meta->add_package_symbol('&register',
-    __PACKAGE__->meta->get_package_symbol('&add_request')
-);
+sub register {
+    add_request(@_);
+}
 
 =head3 perform
 
@@ -209,7 +209,7 @@ Sets the timeout of individual requests, in seconds
 
 =cut
 
-has 'timeout' => (is => 'ro', isa => 'Int');
+has 'timeout' => (is => 'rw', isa => 'Int');
 
 =head3 connection_timeout
 
@@ -285,4 +285,8 @@ under the same terms as Perl itself.
 
 =cut
 
+__PACKAGE__->meta->make_immutable;
+
+no Moose;
+ 
 1; # End of WWW::Curl::Simple

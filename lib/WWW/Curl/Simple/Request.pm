@@ -13,7 +13,7 @@ C<$curl->perform> returns objects of this class
 =cut
 
 
-use Moose;
+use Mouse;
 use WWW::Curl::Easy;
 use Carp qw/croak/;
 use Scalar::Util qw/weaken/;
@@ -128,7 +128,7 @@ sub perform {
     if ($retcode == 0) {
             return $self->response;
     } else {
-            croak("An error happened: ".$self->easy->strerror($retcode)." ($retcode)\n");
+            croak("An error happened on " . $self->request->url . ": ".$self->easy->strerror($retcode)." ($retcode)\n");
     }
     
 }
@@ -158,5 +158,7 @@ under the same terms as Perl itself.
 
 
 =cut
+__PACKAGE__->meta->make_immutable;
+no Moose;
 
 1;
