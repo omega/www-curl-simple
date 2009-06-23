@@ -17,12 +17,12 @@ if (not defined $pid) {
     plan skip_all => "Fork not supported";
 } elsif ($pid == 0) {
     ## In the child, do requests here?
-    plan tests => 1;
+    plan tests => 2;
     
     sleep(1);
     
     my $curl = WWW::Curl::Simple->new(timeout => 1);
-
+    is($curl->timeout, 1);
     {
         $curl->add_request(HTTP::Request->new(GET => $_)) foreach (@urls);
 
