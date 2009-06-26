@@ -44,7 +44,7 @@ The body of the response
 
 =cut
 
-has 'body' => (is => 'rw', isa => 'Str', required => 0, default => '');
+has 'body' => (is => 'rw', isa => 'ScalarRef', required => 0);
 
 =head3 head
 
@@ -52,7 +52,7 @@ The head of the response
 
 =cut
 
-has 'head' => (is => 'rw', isa => 'Str', required => 0, default => '');
+has 'head' => (is => 'rw', isa => 'ScalarRef', required => 0);
 
 =head3 request
 
@@ -97,18 +97,16 @@ sub _build_easy {
     if (scalar(@headers)) {
         $curl->setopt(CURLOPT_HTTPHEADER, \@headers);
     }
+    my ($body_ref, $head_ref);
+    $self->body(\$body_ref);
+    $self->head(\$head_ref);
+    open (my $fileb, ">", \$body_ref);
+    $curl->setopt(CURLOPT_WRITEDATA,$fileb);
     
-    $curl->setopt(CURLOPT_HEADERFUNCTION, sub {
-        my $chunk = shift;
-        $self->head($self->head . $chunk);
-        return length($chunk);
-    });
-    $curl->setopt(CURLOPT_WRITEFUNCTION, sub {
-        my $chunk = shift;
-        $self->body($self->body . $chunk);
-        return length($chunk);
-    });
-    
+    my $h = $self->head;
+    open (my $fileh, ">", \$head_ref);
+    $curl->setopt(CURLOPT_WRITEHEADER,$fileh);
+        
     return $curl;
     
 }
@@ -143,9 +141,9 @@ Also sets request on the response object to the original request object.
 
 sub response {
     my ($self) = @_;
-    my $res = HTTP::Response->parse($self->head . "\r" . $self->body);
+    my $res = HTTP::Response->parse(${$self->head} . "\r" . ${$self->body});
     $res->request($self->request);
-    $res->content($self->body);
+    $res->content(${$self->body});
     return $res;
 }
 
