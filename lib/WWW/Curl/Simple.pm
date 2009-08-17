@@ -137,9 +137,13 @@ sub perform {
         # XXX: Should re-factor this to be a metaclass/trait on the attributes,
         # and a general method that takes all those and applies the propper setopt
         # calls
-        
-        $curl->setopt(CURLOPT_TIMEOUT, $self->timeout) if $self->timeout;
-        $curl->setopt(CURLOPT_CONNECTTIMEOUT, $self->connection_timeout) if $self->connection_timeout;
+        if ($self->timeout_ms) {
+            $curl->setopt(CURLOPT_TIMEOUT_MS, $self->timeout_ms) if $self->timeout_ms;
+            $curl->setopt(CURLOPT_CONNECTTIMEOUT_MS, $self->connection_timeout_ms) if $self->connection_timeout_ms;            
+        } else {
+            $curl->setopt(CURLOPT_TIMEOUT, $self->timeout) if $self->timeout;
+            $curl->setopt(CURLOPT_CONNECTTIMEOUT, $self->connection_timeout) if $self->connection_timeout;
+        }
         
         $curlm->add_handle($curl);
         
@@ -203,21 +207,23 @@ sub wait {
 
 =head2 ATTRIBUTES
 
-=head3 timeout
+=head3 timeout / timeout_ms
 
-Sets the timeout of individual requests, in seconds
+Sets the timeout of individual requests, in seconds or milliseconds
 
 =cut
 
 has 'timeout' => (is => 'ro', isa => 'Int');
+has 'timeout_ms' => (is => 'ro', isa => 'Int');
 
-=head3 connection_timeout
+=head3 connection_timeout /connection_timeout_ms
 
-Sets the timeout of the connect phase of requests, in seconds
+Sets the timeout of the connect phase of requests, in seconds or milliseconds
 
 =cut
 
 has 'connection_timeout' => (is => 'ro', isa => 'Int');
+has 'connection_timeout_ms' => (is => 'ro', isa => 'Int');
 
 
 =head3 fatal
