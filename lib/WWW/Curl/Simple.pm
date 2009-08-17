@@ -9,6 +9,9 @@ use WWW::Curl::Simple::Request;
 use WWW::Curl::Multi;
 use WWW::Curl::Easy;
 
+use Time::HiRes qw/usleep/;
+
+
 #use base 'LWP::Parallel::UserAgent';
 
 use namespace::clean -except => 'meta';
@@ -93,22 +96,62 @@ Adds $req (HTTP::Request) to the list of URL's to fetch
 
 has requests => (
     is => 'ro', 
-    isa => 'ArrayRef', 
+    isa => 'HashRef', 
     auto_deref => 1,
-    default => sub { [] },
+    default => sub { {} },
 );
 
-sub _add_request {
-    my ($self, $req) = @_;
+has '_multi' => (
+    is => 'ro',
+    isa => 'WWW::Curl::Multi',
+    lazy_build => 1,
+);
+sub _build__multi {
+    return WWW::Curl::Multi->new;
+}
+sub number_of_requests {
+    my ($self) = @_;
     
-    push(@{ $self->requests }, $req);
+    return scalar(keys(%{ $self->requests }));
 }
 sub add_request {
     my ($self, $req) = @_;
-    
-    $self->_add_request(WWW::Curl::Simple::Request->new(request => $req));
-}
 
+    my $i = $self->number_of_requests;
+    
+    
+    my $real_req = WWW::Curl::Simple::Request->new(request => $req);
+    
+    $self->_fix_simple($real_req);
+    
+    $real_req->easy->setopt(CURLOPT_PRIVATE, $i);
+
+    $self->requests->{$i} = $real_req;
+    
+    $self->_multi->add_handle($real_req->easy);
+    
+    $self->_multi->perform();
+    
+}
+sub _fix_simple {
+    my ($self, $req) = @_;
+ 
+    my $curl = $req->easy;
+    # we set this so we have the ref later on
+    
+    # here we also mangle all requests based on options
+    # XXX: Should re-factor this to be a metaclass/trait on the attributes,
+    # and a general method that takes all those and applies the propper setopt
+    # calls
+    if ($self->timeout_ms) {
+        $curl->setopt(CURLOPT_TIMEOUT_MS, $self->timeout_ms) if $self->timeout_ms;
+        $curl->setopt(CURLOPT_CONNECTTIMEOUT_MS, $self->connection_timeout_ms) if $self->connection_timeout_ms;            
+    } else {
+        $curl->setopt(CURLOPT_TIMEOUT, $self->timeout) if $self->timeout;
+        $curl->setopt(CURLOPT_CONNECTTIMEOUT, $self->connection_timeout) if $self->connection_timeout;
+    }
+    
+}
 sub register {
     add_request(@_);
 }
@@ -123,40 +166,18 @@ list of HTTP::Response-objects
 sub perform {
     my ($self) = @_;
     
-    my $curlm = WWW::Curl::Multi->new;
+    my $curlm = $self->_multi;
     
     my %reqs;
-    my $i = 0;
-    foreach my $req ($self->requests) {
-        $i++;
-        my $curl = $req->easy;
-        # we set this so we have the ref later on
-        $curl->setopt(CURLOPT_PRIVATE, $i);
-        
-        # here we also mangle all requests based on options
-        # XXX: Should re-factor this to be a metaclass/trait on the attributes,
-        # and a general method that takes all those and applies the propper setopt
-        # calls
-        if ($self->timeout_ms) {
-            $curl->setopt(CURLOPT_TIMEOUT_MS, $self->timeout_ms) if $self->timeout_ms;
-            $curl->setopt(CURLOPT_CONNECTTIMEOUT_MS, $self->connection_timeout_ms) if $self->connection_timeout_ms;            
-        } else {
-            $curl->setopt(CURLOPT_TIMEOUT, $self->timeout) if $self->timeout;
-            $curl->setopt(CURLOPT_CONNECTTIMEOUT, $self->connection_timeout) if $self->connection_timeout;
-        }
-        
-        $curlm->add_handle($curl);
-        
-        $reqs{$i} = $req;
-    }
+    my $i = $self->number_of_requests;
     my @res;
     while ($i) {
         my $active_transfers = $curlm->perform;
         if ($active_transfers != $i) {
             while (my ($id,$retcode) = $curlm->info_read) {
-                if ($id) {
+                if (defined($id)) {
                     $i--;
-                    my $req = $reqs{$id};
+                    my $req = $self->requests->{$id};
                     unless ($retcode == 0) {
                         my $err = "Error during handeling of request: " 
                             .$req->easy->strerror($retcode)." ". $req->request->uri;
@@ -165,10 +186,14 @@ sub perform {
                         carp($err) unless $self->fatal;
                     }
                     push(@res, $req);
-                    delete($reqs{$id});
+                    delete($self->requests->{$id});
+                    warn "handeled a request for " . $req->request->uri;
                 }
             }
         }
+        
+        usleep(50_000);
+        
     }
     return @res;
 }
