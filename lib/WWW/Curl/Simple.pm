@@ -91,6 +91,9 @@ has _requests => (
         _add_request => 'push',
         requests => 'elements',
         _find_request => 'first',
+        _count_requests => 'count',
+        _get_request => 'get',
+        _delete_request => 'delete',
     },
     default => sub { [] },
 );
@@ -116,6 +119,25 @@ sub has_request {
     $self->_find_request(sub {
         $_ == $req
     });
+}
+
+=head3 delete_request $req
+
+Will remove $req from our list of requests
+
+=cut
+
+sub delete_request {
+    my ($self, $req) = @_;
+    
+    return unless $self->has_request($req);
+    # need to find the index
+    my $c = $self->_count_requests;
+    
+    while ($c--) {
+        $self->_delete_request($c) if ($self->_get_request($c) == $req);
+    }
+    return 1;
 }
 
 =head3 perform

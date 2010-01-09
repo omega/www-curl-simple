@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
-use Test::More tests => 7;
+use Test::More tests => 9;
 use WWW::Curl::Simple;
 
 
@@ -23,6 +23,8 @@ my $curl = WWW::Curl::Simple->new();
     
     my @res = $curl->perform;
     
+    ok($curl->delete_request($req), "We can remove a request");
+    is($curl->_count_requests, 1, "We have removed one request");
     foreach my $res (@res) {
         isa_ok($res, "HTTP::Response");
         ok($res->is_success or $res->is_redirect, "we have success for " . $res->base . "!  " . $res->status_line);
