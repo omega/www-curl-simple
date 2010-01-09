@@ -7,9 +7,10 @@ license  'perl';
 
 build_requires 'Test::More';
 
-requires 'WWW::Curl' => '4.0';
+test_requires 'Net::Server';
+
+requires 'WWW::Curl' => '4.06';
 requires 'Moose' => '0.90';
-requires 'Sub::Alias';
 requires 'HTTP::Request';
 requires 'namespace::clean';
 

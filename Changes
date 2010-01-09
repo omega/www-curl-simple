@@ -1,5 +1,27 @@
 Revision history for WWW-Curl-Simple
-
-0.01    Date/time
-        First version, released on an unsuspecting world.
+0.05    2009-06-10 07:44:00+0200
+        New options:
+          - timeout: Set timeout for content in seconds
+          - connection_timeout: Set timeout for connection in seconds
+          - fatal: (defaults to true), if false, will carp, not croak, on errors.
+        
+0.04    2009-05-25 13:06:00+0200
+        Set a default UserAgent header, since some services seem to require a
+        UserAgent header.
+        
+0.03    2009-04-20 09:32:00+0200
+        Bump version.
+        
+0.02    2009-04-20 09:11:00+0200
+        INCOMPAT: Fix some compat issues with LWP::Parallel::UserAgent.
+                  We now return an hash like they do, with objects that have the
+                  same methods
+        INCOMPAT: $curl->perform on a multi-request now returns objects that have
+                  ->request and ->response methods, instead of the ->response
+                  directly.
+        
+        Fix really bad response-fuckup.
+        
+0.01    2009-04-14 09:37:00+0200
+        First version, very basic interface. Does not support everything yet
 
