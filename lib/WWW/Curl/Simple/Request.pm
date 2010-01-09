@@ -8,7 +8,7 @@ WWW::Curl::Simple::Request - A small class representing request/response
 
 Just a way to collect things used by both single and multi, and some
 WWW::Curl setup. You shouldn't need to use this class anywhere, although
-C<$curl->perform> returns objects of this class
+C<< $curl->perform >> returns objects of this class
 
 =cut
 
