@@ -1,7 +1,6 @@
 package WWW::Curl::Simple;
 
 use Moose;
-use MooseX::AttributeHelpers;
 
 use HTTP::Request;
 use HTTP::Response;
@@ -85,23 +84,24 @@ Adds $req (HTTP::Request) to the list of URL's to fetch
 =cut
 
 has _requests => (
-    metaclass => 'Collection::Array', 
+    traits => ['Array'], 
     is => 'ro', 
     isa => 'ArrayRef[WWW::Curl::Simple::Request]', 
-    provides => {
-        push => '_add_request',
-        elements => 'requests'
+    handles => {
+        _add_request => 'push',
+        requests => 'elements',
     },
     default => sub { [] },
 );
 
+alias register => 'add_request';
 sub add_request {
     my ($self, $req) = @_;
+    $req = WWW::Curl::Simple::Request->new(request => $req);
+    $self->_add_request($req);
     
-    $self->_add_request(WWW::Curl::Simple::Request->new(request => $req));
+    return $req;
 }
-
-alias register => 'add_request';
 
 =head3 perform
 
