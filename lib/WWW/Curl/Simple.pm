@@ -90,6 +90,7 @@ has _requests => (
     handles => {
         _add_request => 'push',
         requests => 'elements',
+        _find_request => 'first',
     },
     default => sub { [] },
 );
@@ -101,6 +102,20 @@ sub add_request {
     $self->_add_request($req);
     
     return $req;
+}
+
+=head3 has_request $request
+
+Will return true if $request is one of our requests
+
+=cut
+
+sub has_request {
+    my ($self, $req) = @_;
+    
+    $self->_find_request(sub {
+        $_ == $req
+    });
 }
 
 =head3 perform

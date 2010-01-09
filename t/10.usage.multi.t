@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 
 use strict;
-use Test::More tests => 6;
+use Test::More tests => 7;
 use WWW::Curl::Simple;
 
 
@@ -9,7 +9,9 @@ my $curl = WWW::Curl::Simple->new();
 
 {
     my $req = $curl->add_request(HTTP::Request->new(GET => 'http://en.wikipedia.org/wiki/Main_Page'));
-        
+    
+    ok($curl->has_request($req), "We can check for existance of a request");
+    
     isa_ok(
         $req,
         "WWW::Curl::Simple::Request", "We get the right index back from add_request",
