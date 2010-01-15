@@ -10,8 +10,7 @@ build_requires 'Test::More';
 test_requires 'Net::Server';
 
 requires 'WWW::Curl' => '4.06';
-requires 'Moose' => '0.50';
-requires 'MooseX::AttributeHelpers';
+requires 'Moose' => '0.90';
 requires 'HTTP::Request';
 requires 'namespace::clean';
 

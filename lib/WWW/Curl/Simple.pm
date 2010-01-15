@@ -1,7 +1,6 @@
 package WWW::Curl::Simple;
 
 use Moose;
-use MooseX::AttributeHelpers;
 
 use HTTP::Request;
 use HTTP::Response;
@@ -93,25 +92,65 @@ Adds $req (HTTP::Request) to the list of URL's to fetch
 =cut
 
 has _requests => (
-    metaclass => 'Collection::Array', 
+    traits => ['Array'], 
     is => 'ro', 
     isa => 'ArrayRef[WWW::Curl::Simple::Request]', 
-    provides => {
-        push => '_add_request',
-        elements => 'requests'
+    handles => {
+        _add_request => 'push',
+        requests => 'elements',
+        _find_request => 'first',
+        _count_requests => 'count',
+        _get_request => 'get',
+        _delete_request => 'delete',
     },
     default => sub { [] },
 );
 
 sub add_request {
     my ($self, $req) = @_;
+    $req = WWW::Curl::Simple::Request->new(request => $req);
+    $self->_add_request($req);
     
-    $self->_add_request(WWW::Curl::Simple::Request->new(request => $req));
+    return $req;
 }
 
 __PACKAGE__->meta->add_package_symbol('&register',
     __PACKAGE__->meta->get_package_symbol('&add_request')
 );
+
+=head3 has_request $request
+
+Will return true if $request is one of our requests
+
+=cut
+
+sub has_request {
+    my ($self, $req) = @_;
+    
+    $self->_find_request(sub {
+        $_ == $req
+    });
+}
+
+=head3 delete_request $req
+
+Will remove $req from our list of requests
+
+=cut
+
+sub delete_request {
+    my ($self, $req) = @_;
+    
+    return unless $self->has_request($req);
+    # need to find the index
+    my $c = $self->_count_requests;
+    
+    while ($c--) {
+        $self->_delete_request($c) if ($self->_get_request($c) == $req);
+    }
+    return 1;
+}
+
 
 =head3 perform
 

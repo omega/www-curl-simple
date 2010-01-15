@@ -18,7 +18,9 @@ my $pua = WWW::Curl::Simple->new();
     foreach (keys %$results) {
         my $req = $results->{$_};
         isa_ok($req, "WWW::Curl::Simple::Request");
-        ok($req->response->is_success, "we have success!  " . $req->response->code);
+        ok($req->response->is_success or $req->response->is_redirect, 
+            "we have success!  " . $req->response->code
+        );
     }
     
 }
