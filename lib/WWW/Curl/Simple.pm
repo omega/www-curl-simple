@@ -43,7 +43,8 @@ our $VERSION = '0.05';
 
 $req should be a  HTTP::Request object.
 
-If you have a URI-string or object, look at the get-method instead
+If you have a URI-string or object, look at the get-method instead.
+Returns a L<HTTP::Response> object.
 
 =cut
 
@@ -60,7 +61,7 @@ sub request {
 =head3 get($uri || URI)
 
 Accepts one parameter, which should be a reference to a URI object or a
-string representing a uri.
+string representing a uri. Returns a L<HTTP::Response> object.
 
 =cut
 
@@ -87,7 +88,8 @@ sub post {
 
 =head3 add_request($req)
 
-Adds $req (HTTP::Request) to the list of URL's to fetch
+Adds $req (HTTP::Request) to the list of URL's to fetch. Returns a 
+L<WWW::Simple::Curl::Request>
 
 =cut
 
