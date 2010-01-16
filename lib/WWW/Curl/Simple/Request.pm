@@ -1,8 +1,5 @@
 package WWW::Curl::Simple::Request;
-
-=head1 NAME
-
-WWW::Curl::Simple::Request - A small class representing request/response
+# ABSTRACT: A small class representing request/response
 
 =head1 DESCRIPTION
 
@@ -20,11 +17,7 @@ use Scalar::Util qw/weaken/;
 
 use namespace::clean -except => 'meta';
 
-=head1 INTERFACE
-
-=head2 ATTRIBUTES
-
-=head3 agent
+=attr agent
 
 A String that will be sent as the user-agent string. Defaults to
 
@@ -36,9 +29,7 @@ sub _build_agent {
     return "WWW::Curl::Simple/" . $WWW::Curl::Simple::VERSION;
 }
 
-=head2 METHODS
-
-=head3 body
+=attr body
 
 The body of the response
 
@@ -46,7 +37,7 @@ The body of the response
 
 has 'body' => (is => 'rw', isa => 'ScalarRef', required => 0);
 
-=head3 head
+=attr head
 
 The head of the response
 
@@ -54,7 +45,7 @@ The head of the response
 
 has 'head' => (is => 'rw', isa => 'ScalarRef', required => 0);
 
-=head3 request
+=attr request
 
 The HTTP::Request-object that we where created with. 
 
@@ -62,7 +53,7 @@ The HTTP::Request-object that we where created with.
 
 has 'request' => (is => 'ro', isa => 'HTTP::Request');
 
-=head3 easy
+=attr easy
 
 our WWW::Curl::Easy-object
 
@@ -111,7 +102,7 @@ sub _build_easy {
     
 }
 
-=head3 perform
+=method perform
 
 Performs the actuall request trough WWW::Curl::Easy. Used mostly in
 single request land. Will croak on errors.
@@ -131,7 +122,7 @@ sub perform {
     
 }
 
-=head3 response
+=method response
 
 Returns a HTTP::Response that represents the response of this object.
 
@@ -146,15 +137,5 @@ sub response {
     $res->content(${$self->body});
     return $res;
 }
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2009 Andreas Marienborg, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-
-=cut
 
 1;

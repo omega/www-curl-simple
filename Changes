@@ -1,4 +1,14 @@
 Revision history for WWW-Curl-Simple
+{{$NEXT}}
+
+0.100160  2010-01-16 06:10:12 Europe/Oslo
+        - Switch to filehandles for storing data, should perform better
+        - Better documentation about return values [Marcus Ramberg]
+        INCOMPAT: The return value for add_request is changed. It now returns
+                  the WWW::Curl::Simple::Request-object that was added.
+        - Added has_request and delete_request to help with multi-request 
+          handling [RT#46293]
+        
 0.05    2009-06-10 07:44:00+0200
         New options:
           - timeout: Set timeout for content in seconds

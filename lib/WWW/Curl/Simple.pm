@@ -1,5 +1,5 @@
 package WWW::Curl::Simple;
-
+# ABSTRACT: A Simpler interface to WWW::Curl
 use Moose;
 
 use HTTP::Request;
@@ -13,19 +13,10 @@ use WWW::Curl::Easy;
 
 use namespace::clean -except => 'meta';
 
-=head1 NAME
-
-WWW::Curl::Simple - A simpler interface to WWW::Curl
-
-=head1 VERSION
-
-Version 0.04
 
 =head1 SYNOPSIS
 
-Quick summary of what the module does.
-
-Perhaps a little code snippet.
+It makes it easier to use WWW::Curl::(Easy|Multi), or so I hope
 
     use WWW::Curl::Simple;
 
@@ -33,13 +24,10 @@ Perhaps a little code snippet.
     
     my $res = $curl->get('http://www.google.com/');
 
-
 =cut
 
-our $VERSION = '0.05';
 
-
-=head3 request($req)
+=method request($req)
 
 $req should be a  HTTP::Request object.
 
@@ -58,7 +46,7 @@ sub request {
 }
 
 
-=head3 get($uri || URI)
+=method get($uri || URI)
 
 Accepts one parameter, which should be a reference to a URI object or a
 string representing a uri. Returns a L<HTTP::Response> object.
@@ -70,7 +58,7 @@ sub get {
     return $self->request(HTTP::Request->new(GET => $uri));
 }
 
-=head3 post($uri || URI, $form)
+=method post($uri || URI, $form)
 
 Created a HTTP::Request of type POST to $uri, which can be a string
 or a URI object, and sets the form of the request to $form. See
@@ -84,9 +72,8 @@ sub post {
     return $self->request(HTTP::Request->new(POST => $uri, undef, $form));
 }
 
-=head2 MULTI requests usage
 
-=head3 add_request($req)
+=method add_request($req)
 
 Adds $req (HTTP::Request) to the list of URL's to fetch. Returns a 
 L<WWW::Simple::Curl::Request>
@@ -116,11 +103,17 @@ sub add_request {
     return $req;
 }
 
+=method register($req)
+
+This is just an alias for add_request
+
+=cut
+
 __PACKAGE__->meta->add_package_symbol('&register',
     __PACKAGE__->meta->get_package_symbol('&add_request')
 );
 
-=head3 has_request $request
+=method has_request $request
 
 Will return true if $request is one of our requests
 
@@ -134,7 +127,7 @@ sub has_request {
     });
 }
 
-=head3 delete_request $req
+=method delete_request $req
 
 Will remove $req from our list of requests
 
@@ -154,7 +147,7 @@ sub delete_request {
 }
 
 
-=head3 perform
+=method perform
 
 Does all the requests added with add_request, and returns a 
 list of HTTP::Response-objects
@@ -215,18 +208,15 @@ sub perform {
 }
 
 
-=head3 LWP::Parallel::UserAgent compliant methods
+=head1 LWP::Parallel::UserAgent compliant methods
 
-=over
-
-=item wait
+=method wait
 
 These methods are here to provide an easier transition from
 L<LWP::Parallel::UserAgent>. It is by no means a drop in replacement,
 but using C<wait> instead of C<perform> makes the return-value perform
 more alike
 
-=back
 =cut
 
 sub wait {
@@ -246,9 +236,8 @@ sub wait {
 }
 
 
-=head2 ATTRIBUTES
 
-=head3 timeout / timeout_ms
+=attr timeout / timeout_ms
 
 Sets the timeout of individual requests, in seconds or milliseconds
 
@@ -257,7 +246,7 @@ Sets the timeout of individual requests, in seconds or milliseconds
 has 'timeout' => (is => 'ro', isa => 'Int');
 has 'timeout_ms' => (is => 'ro', isa => 'Int');
 
-=head3 connection_timeout /connection_timeout_ms
+=attr connection_timeout /connection_timeout_ms
 
 Sets the timeout of the connect phase of requests, in seconds or milliseconds
 
@@ -267,7 +256,7 @@ has 'connection_timeout' => (is => 'ro', isa => 'Int');
 has 'connection_timeout_ms' => (is => 'ro', isa => 'Int');
 
 
-=head3 fatal
+=attr fatal
 
 Defaults to true, but if set to false, it will make failure in multi-requests
 warn instead of die.
@@ -275,61 +264,5 @@ warn instead of die.
 =cut
 
 has 'fatal' => (is => 'ro', isa => 'Bool', default => 1);
-
-=head1 AUTHOR
-
-Andreas Marienborg, C<< <andreas at startsiden.no> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-www-curl-simple at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=WWW-Curl-Simple>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc WWW::Curl::Simple
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=WWW-Curl-Simple>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/WWW-Curl-Simple>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/WWW-Curl-Simple>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/WWW-Curl-Simple/>
-
-=back
-
-
-=head1 ACKNOWLEDGEMENTS
-
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2009 Andreas Marienborg, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-
-=cut
 
 1; # End of WWW::Curl::Simple
