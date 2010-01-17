@@ -26,7 +26,7 @@ A String that will be sent as the user-agent string. Defaults to
 has 'agent' => (is => 'rw', isa => 'Str', required => 0, lazy_build => 1);
 
 sub _build_agent {
-    return "WWW::Curl::Simple/" . $WWW::Curl::Simple::VERSION;
+    return "WWW::Curl::Simple/" . ($WWW::Curl::Simple::VERSION ? $WWW::Curl::Simple::VERSION : '0.00');
 }
 
 =attr body

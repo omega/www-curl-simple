@@ -17,17 +17,31 @@ if (not defined $pid) {
     plan skip_all => "Fork not supported";
 } elsif ($pid == 0) {
     ## In the child, do requests here?
-    plan tests => 2;
+    plan tests => 3;
     
     sleep(1);
     
-    my $curl = WWW::Curl::Simple->new(timeout => 1);
-    is($curl->timeout, 1);
     {
-        $curl->add_request(HTTP::Request->new(GET => $_)) foreach (@urls);
+        my $curl = WWW::Curl::Simple->new(timeout => 1);
+        is($curl->timeout, 1);
+        {
+            $curl->add_request(HTTP::Request->new(GET => $_)) foreach (@urls);
 
-        throws_ok { $curl->perform } qr/timeout was reached/i, "We throw propper timeout error";
+            throws_ok { $curl->perform } qr/timeout was reached/i, "We throw propper timeout error";
+
+        }
         
+    }
+    
+    {
+        my $curl = WWW::Curl::Simple->new(timeout_ms => 1);
+        {
+            $curl->add_request(HTTP::Request->new(GET => $_)) foreach (@urls);
+            
+            throws_ok { $curl->perform } qr/(timeout was reached|use timeout_ms)/i,
+                "We throw one of two propper exceptions";
+                
+        }
     }
     
 } else {
