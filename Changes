@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100170  2010-01-17 12:02:59 Europe/Oslo
         - Attempt to support older versions of libcurl trough some magic
 
 0.100170  2010-01-17 09:56:48 Europe/Oslo
