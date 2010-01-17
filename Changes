@@ -1,6 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
-
+        - Adjust a test that fails on some versions of libcurl
+        
 0.100160  2010-01-16 06:10:12 Europe/Oslo
         - Switch to filehandles for storing data, should perform better
         - Better documentation about return values [Marcus Ramberg]
