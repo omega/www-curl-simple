@@ -1,6 +1,8 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
-
+        - Note to self: Do not release when sleepy. Properly fix test-skipping.
+          There is no such module as Net::Server::Base damnit.
+          
 0.100180  2010-01-18 08:50:01 Europe/Oslo
         - Skip one test if we don't have Net::Server::Base installed
         

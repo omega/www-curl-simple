@@ -5,6 +5,11 @@ use Test::More;
 use Test::Exception;
 use WWW::Curl::Simple;
 
+BEGIN {
+    eval "use Net::Server::Single";
+    plan skip_all => 'Net::Server::Single is required for this test' if $@;
+}
+
 
 my @urls = (
 'http://localhost:3516',
