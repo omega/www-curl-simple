@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100180  2010-01-18 08:50:01 Europe/Oslo
         - Skip one test if we don't have Net::Server::Base installed
         
 0.100171  2010-01-17 12:05:39 Europe/Oslo
