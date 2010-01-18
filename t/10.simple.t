@@ -3,6 +3,8 @@
 use strict;
 use Test::More;
 use WWW::Curl::Simple;
+eval "use Net::Server::Base";
+plan skip_all => 'Net::Server::Base is required for this test' if $@;
 
 use t::Testserver;
 
