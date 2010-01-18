@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100181  2010-01-18 09:28:41 Europe/Oslo
         - Note to self: Do not release when sleepy. Properly fix test-skipping.
           There is no such module as Net::Server::Base damnit.
           
