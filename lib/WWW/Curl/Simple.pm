@@ -13,34 +13,32 @@ use WWW::Curl::Easy;
 
 use namespace::clean -except => 'meta';
 
-
 =head1 SYNOPSIS
 
-It makes it easier to use WWW::Curl::(Easy|Multi), or so I hope
+Makes WWW::Curl::(Easy|Multi) easier to use.
 
     use WWW::Curl::Simple;
 
     my $curl = WWW::Curl::Simple->new();
-    
-    my $res = $curl->get('http://www.google.com/');
+
+    my $res  = $curl->get('http://www.google.com/');
 
 =cut
 
-
 =method request($req)
 
-$req should be a  HTTP::Request object.
+C<$req> should be a L<HTTP::Request> object.
 
-If you have a URI-string or object, look at the get-method instead.
-Returns a L<HTTP::Response> object.
+If you have a URI string or object, look at the C<get> method instead.
+Returns a L<WWW::Curl::Simple::Request> object.
 
 =cut
 
 sub request {
     my ($self, $req) = @_;
-    
+
     my $curl = WWW::Curl::Simple::Request->new(request => $req);
-    
+
     # Starts the actual request
     return $curl->perform;
 }
@@ -49,7 +47,7 @@ sub request {
 =method get($uri || URI)
 
 Accepts one parameter, which should be a reference to a URI object or a
-string representing a uri. Returns a L<HTTP::Response> object.
+string representing a URI. Returns a L<HTTP::Response> object.
 
 =cut
 
@@ -60,30 +58,30 @@ sub get {
 
 =method post($uri || URI, $form)
 
-Created a HTTP::Request of type POST to $uri, which can be a string
-or a URI object, and sets the form of the request to $form. See
-L<HTTP::Request> for more information on the format of $form
+Creates a L<HTTP::Request> of type POST to C<$uri>, which can be a string
+or a URI object, and sets the form of the request to C<$form>. See
+L<HTTP::Request> for more information on the format of C<$form>.
 
 =cut
 
 sub post {
     my ($self, $uri, $form) = @_;
-    
+
     return $self->request(HTTP::Request->new(POST => $uri, undef, $form));
 }
 
 
 =method add_request($req)
 
-Adds $req (HTTP::Request) to the list of URL's to fetch. Returns a 
-L<WWW::Simple::Curl::Request>
+Adds C<$req> (a L<HTTP::Request> object) to the list of URLs to fetch. Returns
+a L<WWW::Simple::Curl::Request> object.
 
 =cut
 
 has _requests => (
-    traits => ['Array'], 
-    is => 'ro', 
-    isa => 'ArrayRef[WWW::Curl::Simple::Request]', 
+    traits => ['Array'],
+    is => 'ro',
+    isa => 'ArrayRef[WWW::Curl::Simple::Request]',
     handles => {
         _add_request => 'push',
         requests => 'elements',
@@ -99,13 +97,13 @@ sub add_request {
     my ($self, $req) = @_;
     $req = WWW::Curl::Simple::Request->new(request => $req);
     $self->_add_request($req);
-    
+
     return $req;
 }
 
 =method register($req)
 
-This is just an alias for add_request
+An alias for C<add_request>.
 
 =cut
 
@@ -115,13 +113,13 @@ __PACKAGE__->meta->add_package_symbol('&register',
 
 =method has_request $request
 
-Will return true if $request is one of our requests
+Will return true if C<$request> is one of the object's requests.
 
 =cut
 
 sub has_request {
     my ($self, $req) = @_;
-    
+
     $self->_find_request(sub {
         $_ == $req
     });
@@ -129,17 +127,17 @@ sub has_request {
 
 =method delete_request $req
 
-Will remove $req from our list of requests
+Removes C<$req> from the object's list of requests.
 
 =cut
 
 sub delete_request {
     my ($self, $req) = @_;
-    
+
     return unless $self->has_request($req);
     # need to find the index
     my $c = $self->_count_requests;
-    
+
     while ($c--) {
         $self->_delete_request($c) if ($self->_get_request($c) == $req);
     }
@@ -149,16 +147,16 @@ sub delete_request {
 
 =method perform
 
-Does all the requests added with add_request, and returns a 
-list of HTTP::Response-objects
+Does all the requests added with C<add_request> and returns a list of
+L<WWW::Curl::Simple::Request> objects.
 
 =cut
 
 sub perform {
     my ($self) = @_;
-    
+
     my $curlm = WWW::Curl::Multi->new;
-    
+
     my %reqs;
     my $i = 0;
     foreach my $req ($self->requests) {
@@ -166,7 +164,7 @@ sub perform {
         my $curl = $req->easy;
         # we set this so we have the ref later on
         $curl->setopt(CURLOPT_PRIVATE, $i);
-        
+
         # here we also mangle all requests based on options
         # XXX: Should re-factor this to be a metaclass/trait on the attributes,
         # and a general method that takes all those and applies the propper setopt
@@ -176,14 +174,14 @@ sub perform {
                 croak( "Your trying to use timeout_ms, but your libcurl is apperantly older than 7.16.12.");
             }
             $curl->setopt($WWW::Curl::Easy::CURLOPT_TIMEOUT_MS, $self->timeout_ms) if $self->timeout_ms;
-            $curl->setopt($WWW::Curl::Easy::CURLOPT_CONNECTTIMEOUT_MS, $self->connection_timeout_ms) if $self->connection_timeout_ms;                
+            $curl->setopt($WWW::Curl::Easy::CURLOPT_CONNECTTIMEOUT_MS, $self->connection_timeout_ms) if $self->connection_timeout_ms;
         } else {
             $curl->setopt(CURLOPT_TIMEOUT, $self->timeout) if $self->timeout;
             $curl->setopt(CURLOPT_CONNECTTIMEOUT, $self->connection_timeout) if $self->connection_timeout;
         }
-        
+
         $curlm->add_handle($curl);
-        
+
         $reqs{$i} = $req;
     }
     my @res;
@@ -195,9 +193,9 @@ sub perform {
                     $i--;
                     my $req = $reqs{$id};
                     unless ($retcode == 0) {
-                        my $err = "Error during handeling of request: " 
+                        my $err = "Error during handeling of request: "
                             .$req->easy->strerror($retcode)." ". $req->request->uri;
-                        
+
                         croak($err) if $self->fatal;
                         carp($err) unless $self->fatal;
                     }
@@ -216,25 +214,25 @@ sub perform {
 =method wait
 
 These methods are here to provide an easier transition from
-L<LWP::Parallel::UserAgent>. It is by no means a drop in replacement,
-but using C<wait> instead of C<perform> makes the return-value perform
-more alike
+L<LWP::Parallel::UserAgent>. It is by no means a drop in replacement, but using
+C<wait> instead of C<perform> makes the return value more like that of
+LWP::PUA.
 
 =cut
 
 sub wait {
     my $self = shift;
-    
+
     my @res = $self->perform(@_);
-    
+
     # convert to a hash
     my %res;
-    
+
     while (my $r = pop @res) {
         #warn "adding $r at " . scalar(@res);
         $res{scalar(@res)} = $r;
     }
-    
+
     return \%res;
 }
 
@@ -242,7 +240,7 @@ sub wait {
 
 =attr timeout / timeout_ms
 
-Sets the timeout of individual requests, in seconds or milliseconds
+Sets the timeout of individual requests, in seconds or milliseconds.
 
 =cut
 
@@ -251,7 +249,7 @@ has 'timeout_ms' => (is => 'ro', isa => 'Int');
 
 =attr connection_timeout /connection_timeout_ms
 
-Sets the timeout of the connect phase of requests, in seconds or milliseconds
+Sets the timeout of the connect phase of requests, in seconds or milliseconds.
 
 =cut
 
