@@ -5,7 +5,7 @@ package WWW::Curl::Simple::Request;
 
 Just a way to collect things used by both single and multi, and some
 WWW::Curl setup. You shouldn't need to use this class anywhere, although
-C<< $curl->perform >> returns objects of this class
+C<< $curl->perform >> returns objects of this class.
 
 =cut
 
@@ -20,6 +20,7 @@ use namespace::clean -except => 'meta';
 =attr agent
 
 A String that will be sent as the user-agent string. Defaults to
+"WWW::Curl::Simple/" plus the current version number.
 
 =cut
 
@@ -31,7 +32,7 @@ sub _build_agent {
 
 =attr body
 
-The body of the response
+The body of the response.
 
 =cut
 
@@ -39,7 +40,7 @@ has 'body' => (is => 'rw', isa => 'ScalarRef', required => 0);
 
 =attr head
 
-The head of the response
+The head of the response.
 
 =cut
 
@@ -47,7 +48,7 @@ has 'head' => (is => 'rw', isa => 'ScalarRef', required => 0);
 
 =attr request
 
-The HTTP::Request-object that we where created with. 
+The HTTP::Request object used to create this response.
 
 =cut
 
@@ -55,7 +56,7 @@ has 'request' => (is => 'ro', isa => 'HTTP::Request');
 
 =attr easy
 
-our WWW::Curl::Easy-object
+The WWW::Curl::Easy object which created this response.
 
 =cut
 
@@ -63,23 +64,23 @@ has 'easy' => (is => 'rw', isa => 'WWW::Curl::Easy', required => 0, lazy_build =
 
 sub _build_easy {
     my ($self) = @_;
-    
+
     my $req = $self->request;
     # return ourselves as a WWW::Curl::Easy-object?
-    
+
 
     my $curl = new WWW::Curl::Easy;
-    
+
     $curl->setopt(CURLOPT_NOPROGRESS,1);
     $curl->setopt(CURLOPT_USERAGENT, $self->agent);
-    
+
     my $url = $req->uri->as_string;
     $curl->setopt(CURLOPT_URL, $url);
     if ($req->method eq 'POST') {
         $curl->setopt(CURLOPT_POST, 1);
         $curl->setopt(CURLOPT_POSTFIELDS, $req->content);
     }
-    
+
     my @headers;
     foreach my $h (+$req->headers->header_field_names) {
         #warn "h: $h";
@@ -93,25 +94,25 @@ sub _build_easy {
     $self->head(\$head_ref);
     open (my $fileb, ">", \$body_ref);
     $curl->setopt(CURLOPT_WRITEDATA,$fileb);
-    
+
     my $h = $self->head;
     open (my $fileh, ">", \$head_ref);
     $curl->setopt(CURLOPT_WRITEHEADER,$fileh);
-        
+
     return $curl;
-    
+
 }
 
 =method perform
 
-Performs the actuall request trough WWW::Curl::Easy. Used mostly in
+Performs the actual request throug WWW::Curl::Easy. Used mostly in
 single request land. Will croak on errors.
 
 =cut
 
 sub perform {
     my ($self) = @_;
-    
+
     my $retcode = $self->easy->perform;
     # Looking at the results...
     if ($retcode == 0) {
@@ -119,7 +120,7 @@ sub perform {
     } else {
             croak("An error happened: ".$self->easy->strerror($retcode)." ($retcode)\n");
     }
-    
+
 }
 
 =method response
