@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+0.100182  2011-01-19 05:30:33 Europe/Oslo
+        - Documentation fixes [thanks chromatic]
 
 0.100181  2010-01-18 09:28:41 Europe/Oslo
         - Note to self: Do not release when sleepy. Properly fix test-skipping.
