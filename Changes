@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100183  2011-02-19 07:59:03 Europe/Oslo
         - Fix busy looping by nanosleeping in perform [thanks Eugene Y Jen for report]
 0.100182  2011-01-19 05:30:33 Europe/Oslo
         - Documentation fixes [thanks chromatic]
