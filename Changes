@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100184  2011-05-06 20:58:31 Asia/Bangkok
         - Merge pull request from chromatic to hopefully fix RT#60074
 
 0.100183  2011-02-19 07:59:03 Europe/Oslo
