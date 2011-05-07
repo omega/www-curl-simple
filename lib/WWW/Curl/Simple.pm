@@ -8,7 +8,7 @@ use Carp qw/croak carp/;
 use WWW::Curl::Simple::Request;
 use WWW::Curl::Multi;
 use WWW::Curl::Easy;
-use Time::HiRes qw/nanosleep/;
+use Time::HiRes 1.9705 qw/nanosleep/;
 
 #use base 'LWP::Parallel::UserAgent';
 
