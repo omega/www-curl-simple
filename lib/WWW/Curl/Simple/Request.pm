@@ -105,7 +105,7 @@ sub _build_easy {
 
 =method perform
 
-Performs the actual request throug WWW::Curl::Easy. Used mostly in
+Performs the actual request through WWW::Curl::Easy. Used mostly in
 single request land. Will croak on errors.
 
 =cut

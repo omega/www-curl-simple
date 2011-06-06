@@ -194,7 +194,7 @@ sub perform {
                     $i--;
                     my $req = $reqs{$id};
                     unless ($retcode == 0) {
-                        my $err = "Error during handeling of request: "
+                        my $err = "Error during handling of request: "
                             .$req->easy->strerror($retcode)." ". $req->request->uri;
 
                         croak($err) if $self->fatal;
@@ -205,7 +205,7 @@ sub perform {
                 }
             }
         }
-        # To precent busy-looping
+        # To prevent busy-looping
         nanosleep(1);
     }
     return @res;
