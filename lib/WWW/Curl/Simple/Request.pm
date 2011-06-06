@@ -89,7 +89,7 @@ sub _build_easy {
     if (scalar(@headers)) {
         $curl->setopt(CURLOPT_HTTPHEADER, \@headers);
     }
-    my ($body_ref, $head_ref);
+    my ($body_ref, $head_ref) = ('', '');
     $self->body(\$body_ref);
     $self->head(\$head_ref);
     open (my $fileb, ">", \$body_ref);
