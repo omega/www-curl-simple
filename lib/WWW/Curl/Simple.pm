@@ -75,7 +75,7 @@ sub post {
 =method add_request($req)
 
 Adds C<$req> (a L<HTTP::Request> object) to the list of URLs to fetch. Returns
-a L<WWW::Simple::Curl::Request> object.
+a L<WWW::Curl::Simple::Request> object.
 
 =cut
 
@@ -168,7 +168,7 @@ sub perform {
 
         # here we also mangle all requests based on options
         # XXX: Should re-factor this to be a metaclass/trait on the attributes,
-        # and a general method that takes all those and applies the propper setopt
+        # and a general method that takes all those and applies the proper setopt
         # calls
         if ($self->timeout_ms) {
             unless ($WWW::Curl::Easy::CURLOPT_TIMEOUT_MS) {
@@ -219,7 +219,7 @@ sub perform {
 These methods are here to provide an easier transition from
 L<LWP::Parallel::UserAgent>. It is by no means a drop in replacement, but using
 C<wait> instead of C<perform> makes the return value more like that of
-LWP::PUA.
+LWP::UA.
 
 =cut
 

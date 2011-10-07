@@ -29,7 +29,7 @@ if (not defined $pid) {
         {
             $curl->add_request(HTTP::Request->new(GET => $_)) foreach (@urls);
 
-            throws_ok { $curl->perform } qr/timeout was reached/i, "We throw propper timeout error";
+            throws_ok { $curl->perform } qr/timeout was reached/i, "We throw proper timeout error";
 
         }
         
@@ -41,7 +41,7 @@ if (not defined $pid) {
             $curl->add_request(HTTP::Request->new(GET => $_)) foreach (@urls);
             
             throws_ok { $curl->perform } qr/(timeout was reached|use timeout_ms)/i,
-                "We throw one of two propper exceptions";
+                "We throw one of two proper exceptions";
                 
         }
     }
