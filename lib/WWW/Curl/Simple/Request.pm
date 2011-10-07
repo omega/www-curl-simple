@@ -48,7 +48,7 @@ has 'head' => (is => 'rw', isa => 'ScalarRef', required => 0);
 
 =attr request
 
-The HTTP::Request object used to create this response.
+The L<HTTP::Request> object used to create this response.
 
 =cut
 
@@ -56,7 +56,7 @@ has 'request' => (is => 'ro', isa => 'HTTP::Request');
 
 =attr easy
 
-The WWW::Curl::Easy object which created this response.
+The L<WWW::Curl::Easy> object which created this response.
 
 =cut
 
@@ -105,7 +105,7 @@ sub _build_easy {
 
 =method perform
 
-Performs the actual request through WWW::Curl::Easy. Used mostly in
+Performs the actual request through L<WWW::Curl::Easy>. Used mostly in
 single request land. Will croak on errors.
 
 =cut
@@ -125,7 +125,7 @@ sub perform {
 
 =method response
 
-Returns a HTTP::Response that represents the response of this object.
+Returns a L<HTTP::Response> that represents the response of this object.
 
 Also sets request on the response object to the original request object.
 
