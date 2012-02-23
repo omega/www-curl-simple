@@ -21,28 +21,28 @@ plan tests => 11 + scalar(@urls) * 4;
 
 {
     my $curl = WWW::Curl::Simple->new();
-    
+
     $curl->add_request(HTTP::Request->new(GET => $_)) foreach (@urls);
-    
+
     my @res = $curl->perform;
-    
+
     foreach my $req (@res) {
         isa_ok($req, "WWW::Curl::Simple::Request");
         my $res = $req->response;
         isa_ok($res, "HTTP::Response");
         ok($res->is_success or $res->is_redirect, "we have success!  " . $res->code);
-        
+
         isa_ok($res->request, "HTTP::Request");
     }
-    
+
 }
 {
     my $curl = WWW::Curl::Simple->new();
-    
+
     my $req = $curl->add_request(HTTP::Request->new(GET => 'http://en.wikipedia.org/wiki/Main_Page'));
-    
+
     ok($curl->has_request($req), "We can check for existance of a request");
-    
+
     isa_ok(
         $req,
         "WWW::Curl::Simple::Request", "We get the right index back from add_request",
@@ -51,15 +51,15 @@ plan tests => 11 + scalar(@urls) * 4;
         $curl->add_request(HTTP::Request->new(GET => 'http://www.yahoo.com')),
         "WWW::Curl::Simple::Request", "We get the right index back from our second add_request",
     );
-    
+
     my @res = $curl->perform;
-    
+
     ok($curl->delete_request($req), "We can remove a request");
     is($curl->_count_requests, 1, "We have removed one request");
     foreach my $req (@res) {
         isa_ok($req, "WWW::Curl::Simple::Request");
         my $res = $req->response;
-        
+
         isa_ok($res, "HTTP::Response");
         ok($res->is_success or $res->is_redirect, "we have success for " . $res->base . "!  " . $res->status_line);
     }
