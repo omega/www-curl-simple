@@ -270,3 +270,16 @@ warn instead of die.
 has 'fatal' => (is => 'ro', isa => 'Bool', default => 1);
 
 1; # End of WWW::Curl::Simple
+
+=head1 THANKS
+
+=over 4
+
+=item chromatic
+
+For several typo and doc fixes
+
+=back
+
+=cut
+
