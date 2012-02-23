@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+        - Release some more doc fixes from chromatic
+          - Fixes RT#70782
 
 0.100184  2011-05-06 20:58:31 Asia/Bangkok
         - Merge pull request from chromatic to hopefully fix RT#60074
