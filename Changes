@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100185  2012-02-23 11:08:36 Europe/Oslo
         - Merge more doc fixes from chromatic
           - Fixes RT#70782
         - Test can run in parallel now (no shared port number)
