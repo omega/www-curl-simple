@@ -99,6 +99,15 @@ sub _build_easy {
     open (my $fileh, ">", \$head_ref);
     $curl->setopt(CURLOPT_WRITEHEADER,$fileh);
 
+    # follow redirects for up to 5 hops
+    $curl->setopt(CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP);
+    $curl->setopt(CURLOPT_FOLLOWLOCATION, 1);
+    $curl->setopt(CURLOPT_MAXREDIRS, 5);
+    $curl->setopt(CURLOPT_AUTOREFERER, 1);
+
+    # don't require certificate data to make https requests
+    $curl->setopt(CURLOPT_SSL_VERIFYPEER, 0);
+
     return $curl;
 
 }
