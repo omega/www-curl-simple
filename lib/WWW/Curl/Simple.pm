@@ -38,7 +38,7 @@ Returns a L<WWW::Curl::Simple::Request> object.
 sub request {
     my ($self, $req) = @_;
 
-    my $curl = WWW::Curl::Simple::Request->new(request => $req);
+    my $curl = WWW::Curl::Simple::Request->new(simple_ua => $self, request => $req);
 
     # Starts the actual request
     return $curl->perform;
@@ -96,7 +96,7 @@ has _requests => (
 
 sub add_request {
     my ($self, $req) = @_;
-    $req = WWW::Curl::Simple::Request->new(request => $req);
+    $req = WWW::Curl::Simple::Request->new(simple_ua => $self, request => $req);
     $self->_add_request($req);
 
     return $req;
@@ -168,12 +168,12 @@ sub perform {
 
         # follow redirects for up to 5 hops
         $curl->setopt(CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP);
-        $curl->setopt(CURLOPT_FOLLOWLOCATION, 1);
-        $curl->setopt(CURLOPT_MAXREDIRS, 5);
+        $curl->setopt(CURLOPT_FOLLOWLOCATION, $self->max_redirects > 0);
+        $curl->setopt(CURLOPT_MAXREDIRS, $self->max_redirects);
         $curl->setopt(CURLOPT_AUTOREFERER, 1);
 
         # don't require certificate data to make https requests
-        $curl->setopt(CURLOPT_SSL_VERIFYPEER, 0);
+        $curl->setopt(CURLOPT_SSL_VERIFYPEER, $self->check_ssl_certs);
 
         # here we also mangle all requests based on options
         # XXX: Should re-factor this to be a metaclass/trait on the attributes,
@@ -256,8 +256,27 @@ Sets the timeout of individual requests, in seconds or milliseconds.
 
 =cut
 
+
 has 'timeout' => (is => 'ro', isa => 'Int');
 has 'timeout_ms' => (is => 'ro', isa => 'Int');
+
+=attr max_redirects
+
+Sets the maximum number of redirects that should be transparently followed.
+Set this to 0 if you don't want to follow redirects. Default: 5.
+
+=cut
+
+has 'max_redirects' => (is => 'ro', isa => 'Int', default => 5);
+
+=attr check_ssl_certs
+
+Specifies whether the underlying Curl library should check SSL certificates
+when making https requests. Defaults to 0 (i.e. don't check certs).
+
+=cut
+
+has 'check_ssl_certs' => (is => 'ro', isa => 'Int', default => 0);
 
 =attr connection_timeout /connection_timeout_ms
 
