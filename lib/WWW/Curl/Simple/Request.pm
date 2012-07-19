@@ -60,7 +60,7 @@ The WWW::Curl::Simple instance that generated this request.
 
 =cut
 
-has 'simple_ua' => (is => 'ro', isa => 'WWW::Curl::Simple');
+has 'simple_ua' => (is => 'ro', isa => 'WWW::Curl::Simple', weak_ref => 1);
 
 =attr easy
 
