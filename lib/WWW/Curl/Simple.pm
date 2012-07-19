@@ -166,15 +166,6 @@ sub perform {
         # we set this so we have the ref later on
         $curl->setopt(CURLOPT_PRIVATE, $i);
 
-        # follow redirects for up to 5 hops
-        $curl->setopt(CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP);
-        $curl->setopt(CURLOPT_FOLLOWLOCATION, $self->max_redirects > 0);
-        $curl->setopt(CURLOPT_MAXREDIRS, $self->max_redirects);
-        $curl->setopt(CURLOPT_AUTOREFERER, 1);
-
-        # don't require certificate data to make https requests
-        $curl->setopt(CURLOPT_SSL_VERIFYPEER, $self->check_ssl_certs);
-
         # here we also mangle all requests based on options
         # XXX: Should re-factor this to be a metaclass/trait on the attributes,
         # and a general method that takes all those and applies the proper setopt
