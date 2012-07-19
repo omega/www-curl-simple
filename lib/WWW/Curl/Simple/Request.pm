@@ -152,6 +152,9 @@ Also sets request on the response object to the original request object.
 
 sub response {
     my ($self) = @_;
+    # If we handled redirects, we'll have multiple headers from CURLOPT_WRITEHEADER,
+    # so we strip off all but the last one before parsing it
+    ${ $self->head } =~ s!^HTTP.*\r?\n\r?\nHTTP!HTTP!s;
     my $res = HTTP::Response->parse(${$self->head} . "\r" . ${$self->body});
     $res->request($self->request);
     $res->content(${$self->body});
