@@ -54,6 +54,14 @@ The L<HTTP::Request> object used to create this response.
 
 has 'request' => (is => 'ro', isa => 'HTTP::Request');
 
+=attr simple_ua
+
+The WWW::Curl::Simple instance that generated this request.
+
+=cut
+
+has 'simple_ua' => (is => 'ro', isa => 'WWW::Curl::Simple', weak_ref => 1);
+
 =attr easy
 
 The L<WWW::Curl::Easy> object which created this response.
@@ -99,6 +107,17 @@ sub _build_easy {
     open (my $fileh, ">", \$head_ref);
     $curl->setopt(CURLOPT_WRITEHEADER,$fileh);
 
+    my $max_redirects = $self->simple_ua->max_redirects;
+
+    # follow redirects for up to 5 hops
+    $curl->setopt(CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP);
+    $curl->setopt(CURLOPT_FOLLOWLOCATION, $max_redirects > 0);
+    $curl->setopt(CURLOPT_MAXREDIRS, $max_redirects);
+    $curl->setopt(CURLOPT_AUTOREFERER, 1);
+
+    # don't require certificate data to make https requests
+    $curl->setopt(CURLOPT_SSL_VERIFYPEER, $self->simple_ua->check_ssl_certs);
+
     return $curl;
 
 }
@@ -133,6 +152,9 @@ Also sets request on the response object to the original request object.
 
 sub response {
     my ($self) = @_;
+    # If we handled redirects, we'll have multiple headers from CURLOPT_WRITEHEADER,
+    # so we strip off all but the last one before parsing it
+    ${ $self->head } =~ s!^HTTP.*\r?\n\r?\nHTTP!HTTP!s;
     my $res = HTTP::Response->parse(${$self->head} . "\r" . ${$self->body});
     $res->request($self->request);
     $res->content(${$self->body});
