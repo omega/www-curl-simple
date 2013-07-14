@@ -1,5 +1,9 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+        - Default OFF for check ssl certs.
+          Can be turned back on with an option on the UA
+        - Default to follow 5 redirects
+          The number can be changed, and redirect follows can be disabled
 
 0.100185  2012-02-23 11:08:36 Europe/Oslo
         - Merge more doc fixes from chromatic
