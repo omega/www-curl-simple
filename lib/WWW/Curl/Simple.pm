@@ -16,10 +16,6 @@ use namespace::clean -except => 'meta';
 
 =head1 SYNOPSIS
 
-Makes WWW::Curl::(Easy|Multi) easier to use.
-
-    use WWW::Curl::Simple;
-
     my $curl = WWW::Curl::Simple->new();
 
     my $res  = $curl->get('http://www.google.com/');
