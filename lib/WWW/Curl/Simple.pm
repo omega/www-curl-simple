@@ -269,6 +269,15 @@ when making https requests. Defaults to 0 (i.e. don't check certs).
 
 has 'check_ssl_certs' => (is => 'ro', isa => 'Int', default => 0);
 
+=attr ssl_cert_bundle
+
+Specifies the bundle to look for CA certificates in. Leave blank for system
+default, which should work if your libcurl is properly compiled.
+
+=cut
+
+has 'ssl_cert_bundle' => (is => 'ro', isa => 'Str', predicate => 'has_cacert');
+
 =attr connection_timeout /connection_timeout_ms
 
 Sets the timeout of the connect phase of requests, in seconds or milliseconds.
