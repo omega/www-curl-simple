@@ -9,7 +9,10 @@ my $curl;
 my $response;
 
 {
-    $curl     = WWW::Curl::Simple->new(check_ssl_certs => 1);
+    $curl     = WWW::Curl::Simple->new(
+        check_ssl_certs => 1,
+        ssl_cert_bundle => 't/certs',
+    );
     eval { $response = $curl->get($url); };
     ok($@ && !defined($response));
 }

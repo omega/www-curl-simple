@@ -117,6 +117,9 @@ sub _build_easy {
 
     # don't require certificate data to make https requests
     $curl->setopt(CURLOPT_SSL_VERIFYPEER, $self->simple_ua->check_ssl_certs);
+    if ($self->simple_ua->has_cacert) {
+        $curl->setopt(CURLOPT_CAINFO, $self->simple_ua->ssl_cert_bundle);
+    }
 
     return $curl;
 
