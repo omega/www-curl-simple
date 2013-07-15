@@ -267,7 +267,7 @@ when making https requests. Defaults to 0 (i.e. don't check certs).
 
 =cut
 
-has 'check_ssl_certs' => (is => 'ro', isa => 'Int', default => 0);
+has 'check_ssl_certs' => (is => 'ro', isa => 'Int', default => 1);
 
 =attr ssl_cert_bundle
 
