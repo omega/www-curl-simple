@@ -212,14 +212,11 @@ sub perform {
 }
 
 
-=head1 LWP::Parallel::UserAgent compliant methods
-
 =method wait
 
-These methods are here to provide an easier transition from
+This method is here to provide an easier transition from
 L<LWP::Parallel::UserAgent>. It is by no means a drop in replacement, but using
-C<wait> instead of C<perform> makes the return value more like that of
-LWP::UA.
+C<wait> instead of C<perform> makes the return value more like that of LWP::UA.
 
 =cut
 
@@ -299,15 +296,4 @@ has 'fatal' => (is => 'ro', isa => 'Bool', default => 1);
 
 1; # End of WWW::Curl::Simple
 
-=head1 THANKS
-
-=over 4
-
-=item chromatic
-
-For several typo and doc fixes
-
-=back
-
-=cut
 
