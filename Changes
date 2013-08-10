@@ -1,14 +1,15 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
         - Change SYNOPSIS to work with Test::Synopsis
+        - Fix #8 by reformating some old changelogs
 
 0.100186  2013-07-15 16:10:09 Asia/Bangkok
         - Make it possible to turn OFF ssl peer verification
           The default is still to be secure, but it is now possible to be
-          insecure if you want [neilbowers]
+          insecure if you want (neilbowers)
         - Default to follow 5 redirects
           The number can be changed, and redirect follows can be disabled
-          [neilbowers]
+          (neilbowers)
 
 0.100185  2012-02-23 11:08:36 Europe/Oslo
         - Merge more doc fixes from chromatic
