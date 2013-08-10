@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100187  2013-08-10 17:53:22 Asia/Bangkok
         - Change SYNOPSIS to work with Test::Synopsis
         - Fix #8 by reformating some old changelogs
 
