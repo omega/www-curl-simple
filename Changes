@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+        - Check for existance of CURLPROTO_HTTP before attempting to use it, should
+          fix us so we work better with older libcurls again.
 
 0.100187  2013-08-10 17:53:22 Asia/Bangkok
         - Change SYNOPSIS to work with Test::Synopsis
