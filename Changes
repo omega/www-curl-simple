@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100188  2013-08-28 09:12:03 Asia/Bangkok
         - Check for existance of CURLPROTO_HTTP before attempting to use it, should
           fix us so we work better with older libcurls again.
 
@@ -16,8 +18,7 @@ Revision history for WWW-Curl-Simple
           (neilbowers)
 
 0.100185  2012-02-23 11:08:36 Europe/Oslo
-        - Merge more doc fixes from chromatic
-          - Fixes RT#70782
+        - Merge more doc fixes from chromatic - fixes RT#70782
         - Test can run in parallel now (no shared port number)
 
 0.100184  2011-05-06 20:58:31 Asia/Bangkok
