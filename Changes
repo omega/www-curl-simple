@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100189  2013-09-02 11:19:11 Asia/Bangkok
         - No longer use new constants, use variables instead. Properly fix it for
           older libcurls I hope :P
 
