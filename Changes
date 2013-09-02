@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+        - No longer use new constants, use variables instead. Properly fix it for
+          older libcurls I hope :P
 
 0.100188  2013-08-28 09:12:03 Asia/Bangkok
         - Check for existance of CURLPROTO_HTTP before attempting to use it, should

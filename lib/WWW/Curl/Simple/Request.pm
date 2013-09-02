@@ -112,7 +112,7 @@ sub _build_easy {
     # follow redirects for up to 5 hops
     if ($WWW::Curl::Easy::CURLPROTO_HTTP) {
         # This option and the CURLPROTO_HTTP was both added in 7.19.4
-        $curl->setopt(CURLOPT_REDIR_PROTOCOLS, CURLPROTO_HTTP);
+        $curl->setopt($WWW::Curl::Easy::CURLOPT_REDIR_PROTOCOLS, $WWW::Curl::Easy::CURLPROTO_HTTP);
     }
     $curl->setopt(CURLOPT_FOLLOWLOCATION, $max_redirects > 0);
     $curl->setopt(CURLOPT_MAXREDIRS, $max_redirects);
