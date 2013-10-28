@@ -290,6 +290,8 @@ warn instead of die.
 
 has 'fatal' => (is => 'ro', isa => 'Bool', default => 1);
 
+__PACKAGE__->meta->make_immutable;
+
 1; # End of WWW::Curl::Simple
 
 
