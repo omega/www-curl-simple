@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100190  2013-10-28 21:11:09 America/Lima
         - Use immutable classes, thanks @haarg
 
 0.100189  2013-09-02 11:19:11 Asia/Bangkok
