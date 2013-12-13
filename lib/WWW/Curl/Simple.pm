@@ -256,7 +256,7 @@ has 'max_redirects' => (is => 'ro', isa => 'Int', default => 5);
 =attr check_ssl_certs
 
 Specifies whether the underlying Curl library should check SSL certificates
-when making https requests. Defaults to 0 (i.e. don't check certs).
+when making https requests. Defaults to 1 (i.e. do check certs, to err on safe side).
 
 =cut
 
