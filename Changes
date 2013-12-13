@@ -1,5 +1,7 @@
 Revision history for WWW-Curl-Simple
 {{$NEXT}}
+
+0.100191  2013-12-13 11:34:55 Asia/Bangkok
         - Fix #10: Update pod to reflect changed default value
 
 0.100190  2013-10-28 21:11:09 America/Lima
